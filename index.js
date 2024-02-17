@@ -18,14 +18,11 @@ const questions = [
 // Inquirer function for collecting user input
 function collectInformation() {
     let questionsArray = [];
-    for (q = 0; q < questions.length; q++) {
-        let question = questions[q];
+    for (var question of questions) {
         let [type, name, message, choices] = question;
-        questionsArray[q] = {type: type, name: name, message: message, choices: choices};
+        questionsArray.push({type: type, name: name, message: message, choices: choices});
     };
-
-    console.log(questionsArray);
-
+    
     inquirer
         .prompt(questionsArray)
         .then((data) => {

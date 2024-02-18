@@ -1,9 +1,14 @@
 // TODO: Include packages needed for this application
 const inquirer = require('inquirer');
 const fs = require('fs');
+const generateMarkdown = require('./utils/generateMarkdown.js');
+
+
 
 // List of licenses as suggested by GitHub
-const licenses = [
+const licenses = 
+
+/[
     'None',
     'Apache License 2.0',
     'GNU General Public License v3.0',
@@ -47,8 +52,9 @@ function collectInformation() {
 
     inquirer
         .prompt(questionsArray)
-        .then((data) => {
-            console.log(data);
+        .then((readmeContent) => {
+            let markdown = generateMarkdown(readmeContent);
+            writeToFile(readmeContent.title, markdown);
         });
 };
 

@@ -1,44 +1,43 @@
 // TODO: Include packages needed for this application
 const inquirer = require('inquirer');
 const fs = require('fs');
-const generateMarkdown = require('./utils/generateMarkdown.js');
+const generateMarkdownAsync = require('./utils/generateMarkdown.js');
 
-var licenseData = [];
 var licenseNames = ['None'];
 
-
 // List of licenses as suggested by GitHub
-function requestLicenses() {
-    fetch('https://api.github.com/licenses?featured=false&per_page=100')
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (licenseRequest) {
-            licenseData = licenseRequest;
-            for (license of licenseRequest) {
-                licenseNames.push(license.name);
-            }
-        })
-};
+async function requestLicensesAsync() {
+    try {
+        let response = await fetch('https://api.github.com/licenses?per_page=100');
+        let licenseData = await response.json();
+        for (license of licenseData) {
+            licenseNames.push(license.name);
+        }
+        collectInformation(licenseData);
+    } catch (error) {
+        console.log('Error retrieveing license data:', error);
+    }
+}
+
 
 // TODO: Create an array of questions for user input
 // Each question is an array of Inquirer prompt members.
 // Index 1: type, Index 2: name, Index 3: message, 
 // Index 4: choices, Index 5: loop, Index 6: default
 const questions = [
-    ['input', 'title', 'What is the title of your project?'],
-    ['input', 'description', 'What is the description of your project?'],
-    ['input', 'installation', 'What are the installation instructions?'],
-    ['input', 'usage', 'What is the usage information?'],
-    ['input', 'contribution', 'What are the contribution guidelines?'],
-    ['input', 'test', 'What are the test instructions?'],
+    // ['input', 'title', 'What is the title of your project?'],
+    // ['input', 'description', 'What is the description of your project?'],
+    // ['input', 'installation', 'What are the installation instructions?'],
+    // ['input', 'usage', 'What is the usage information?'],
+    // ['input', 'contribution', 'What are the contribution guidelines?'],
+    // ['input', 'test', 'What are the test instructions?'],
     ['list', 'license', 'What license are you using?', licenseNames, false],
-    ['input', 'github', 'What is your GitHub username?'],
-    ['input', 'email', 'What is your email address?']
+    // ['input', 'github', 'What is your GitHub username?'],
+    // ['input', 'email', 'What is your email address?']
 ];
 
 // Inquirer function for collecting user input
-function collectInformation() {
+function collectInformation(licenseData) {
     let questionsArray = [];
     for (var question of questions) {
         let [type, name, message, choices, loop] = question;
@@ -48,10 +47,24 @@ function collectInformation() {
     inquirer
         .prompt(questionsArray)
         .then((readmeContent) => {
-            let markdown = generateMarkdown(readmeContent);
-            writeToFile(readmeContent.title, markdown);
+            sendToMarkdownFile(readmeContent, licenseData);
         });
 };
+
+function sendToMarkdownFile(readmeContent, licenseData) {
+    if (readmeContent.license !== 'None') {
+        var licenseKey = getLicenseKey(readmeContent.license, licenseData);
+    } else {
+        var licenseKey = 'None';
+    }
+    generateMarkdownAsync(readmeContent, licenseKey);
+}
+
+function getLicenseKey(licenseName, licenseData) {
+    let keyIndex = (licenseNames.indexOf(licenseName) - 1);
+    let licenseKey = licenseData[keyIndex].key;
+    return licenseKey;
+}
 
 // TODO: Create a function to write README file
 function writeToFile(fileName, data) {
@@ -61,8 +74,7 @@ function writeToFile(fileName, data) {
 
 // TODO: Create a function to initialize app
 function init() {
-    requestLicenses();
-    collectInformation();
+    requestLicensesAsync();
 };
 
 // Function call to initialize app

@@ -6,9 +6,13 @@ const generateMarkdown = require('./utils/generateMarkdown.js');
 
 
 // List of licenses as suggested by GitHub
-const licenses = 
-
-/[
+function requestLicenses() {
+    fetch('https://api.github.com/orgs/nodejs/repos')
+    .then(function (response) {
+      console.log(response.json());
+    })
+};
+/* [
     'None',
     'Apache License 2.0',
     'GNU General Public License v3.0',
@@ -23,7 +27,7 @@ const licenses =
     'GNU Lesser General Public License v2.1',
     'Mozilla Public License 2.0',
     'The Unlicense'
-];
+]; 
 
 
 // TODO: Create an array of questions for user input
@@ -63,11 +67,12 @@ function writeToFile(fileName, data) {
     fs.writefile(fileName, data, (err) =>
         err ? console.error(err) : console.log('README successfully generated!'))
 };
-
+*/
 
 // TODO: Create a function to initialize app
 function init() {
-    collectInformation();
+    requestLicenses();
+    //collectInformation();
 };
 
 // Function call to initialize app

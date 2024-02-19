@@ -6,7 +6,6 @@ const generateMarkdown = require('./utils/generateMarkdown.js');
 var licenseData = [];
 var licenseNames = ['None'];
 
-
 // List of licenses as suggested by GitHub
 function requestLicenses() {
     fetch('https://api.github.com/licenses?featured=false&per_page=100')
@@ -18,6 +17,7 @@ function requestLicenses() {
             for (license of licenseRequest) {
                 licenseNames.push(license.name);
             }
+            collectInformation();
         })
 };
 
@@ -26,15 +26,15 @@ function requestLicenses() {
 // Index 1: type, Index 2: name, Index 3: message, 
 // Index 4: choices, Index 5: loop, Index 6: default
 const questions = [
-    ['input', 'title', 'What is the title of your project?'],
-    ['input', 'description', 'What is the description of your project?'],
-    ['input', 'installation', 'What are the installation instructions?'],
-    ['input', 'usage', 'What is the usage information?'],
-    ['input', 'contribution', 'What are the contribution guidelines?'],
-    ['input', 'test', 'What are the test instructions?'],
+    // ['input', 'title', 'What is the title of your project?'],
+    // ['input', 'description', 'What is the description of your project?'],
+    // ['input', 'installation', 'What are the installation instructions?'],
+    // ['input', 'usage', 'What is the usage information?'],
+    // ['input', 'contribution', 'What are the contribution guidelines?'],
+    // ['input', 'test', 'What are the test instructions?'],
     ['list', 'license', 'What license are you using?', licenseNames, false],
-    ['input', 'github', 'What is your GitHub username?'],
-    ['input', 'email', 'What is your email address?']
+    // ['input', 'github', 'What is your GitHub username?'],
+    // ['input', 'email', 'What is your email address?']
 ];
 
 // Inquirer function for collecting user input
@@ -48,8 +48,8 @@ function collectInformation() {
     inquirer
         .prompt(questionsArray)
         .then((readmeContent) => {
-            let markdown = generateMarkdown(readmeContent);
-            writeToFile(readmeContent.title, markdown);
+            let markdown = generateMarkdown(readmeContent, licenseData);
+            // writeToFile(readmeContent.title, markdown);
         });
 };
 
@@ -62,7 +62,6 @@ function writeToFile(fileName, data) {
 // TODO: Create a function to initialize app
 function init() {
     requestLicenses();
-    collectInformation();
 };
 
 // Function call to initialize app

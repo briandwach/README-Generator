@@ -15,7 +15,8 @@ async function renderLicenseLinkAsync(licenseKey) {
 // If there is no license, return an empty string
 function renderLicenseBadge(licenseKey, licenseLink) {
   if (licenseKey !== 'None') {
-    return `[![License](https://img.shields.io/badge/License-${licenseKey}-blue.svg)](${licenseLink})`
+    let alteredKey = licenseKey.replaceAll('-', '--');
+    return `[![License](https://img.shields.io/badge/License-${alteredKey}-blue.svg)](${licenseLink})`
   } else {
     return '';
   }
@@ -36,7 +37,7 @@ function renderLicenseSection(licenseName) {
 // TODO: Create a function to generate markdown for README
 async function generateMarkdownAsync(readmeContent, licenseKey) {
   try {
-     var licenseLink = await renderLicenseLinkAsync(licenseKey);     
+    var licenseLink = await renderLicenseLinkAsync(licenseKey);
   } catch (error) {
     console.log('Error generating markdown:', error);
   }
@@ -44,7 +45,44 @@ async function generateMarkdownAsync(readmeContent, licenseKey) {
   var licenseBadge = renderLicenseBadge(licenseKey, licenseLink);
   var licenseSection = renderLicenseSection(readmeContent.license);
 
-  //return `# ${readmeContent.title}`;
+
+  return `# ${readmeContent.title} 
+
+${licenseBadge}
+
+## Description
+${readmeContent.description}
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
+- [Contributing](#contributing)
+- [Tests](#tests)
+- [Questions](#questions)
+
+## Installation
+${readmeContent.installation}
+
+## Usage
+${readmeContent.usage}
+
+## License
+${licenseSection} 
+
+## Contributing
+${readmeContent.contribution}
+
+## Tests
+${readmeContent.test}
+
+## Questions
+Please email me with any questions regarding this application at: 
+${readmeContent.email}
+
+Additionally, checkout more of my work on GitHub:
+[${readmeContent.github}](https://github.com/${readmeContent.github})`;
 }
 
 module.exports = generateMarkdownAsync;

@@ -25,15 +25,15 @@ async function requestLicensesAsync() {
 // Index 1: type, Index 2: name, Index 3: message, 
 // Index 4: choices, Index 5: loop, Index 6: default
 const questions = [
-    // ['input', 'title', 'What is the title of your project?'],
-    // ['input', 'description', 'What is the description of your project?'],
-    // ['input', 'installation', 'What are the installation instructions?'],
-    // ['input', 'usage', 'What is the usage information?'],
-    // ['input', 'contribution', 'What are the contribution guidelines?'],
-    // ['input', 'test', 'What are the test instructions?'],
+    ['input', 'title', 'What is the title of your project?'],
+    ['input', 'description', 'What is the description of your project?'],
+    ['input', 'installation', 'What are the installation instructions?'],
+    ['input', 'usage', 'What is the usage information?'],
+    ['input', 'contribution', 'What are the contribution guidelines?'],
+    ['input', 'test', 'What are the test instructions?'],
     ['list', 'license', 'What license are you using?', licenseNames, false],
-    // ['input', 'github', 'What is your GitHub username?'],
-    // ['input', 'email', 'What is your email address?']
+    ['input', 'github', 'What is your GitHub username?'],
+    ['input', 'email', 'What is your email address?']
 ];
 
 // Inquirer function for collecting user input
@@ -51,13 +51,14 @@ function collectInformation(licenseData) {
         });
 };
 
-function sendToMarkdownFile(readmeContent, licenseData) {
+async function sendToMarkdownFile(readmeContent, licenseData) {
     if (readmeContent.license !== 'None') {
         var licenseKey = getLicenseKey(readmeContent.license, licenseData);
     } else {
         var licenseKey = 'None';
     }
-    generateMarkdownAsync(readmeContent, licenseKey);
+    let markdownContent = await generateMarkdownAsync(readmeContent, licenseKey);
+    writeToFile(markdownContent);
 }
 
 function getLicenseKey(licenseName, licenseData) {
@@ -67,8 +68,8 @@ function getLicenseKey(licenseName, licenseData) {
 }
 
 // TODO: Create a function to write README file
-function writeToFile(fileName, data) {
-    fs.writefile(fileName, data, (err) =>
+function writeToFile(markdownContent) {
+    fs.writeFile('./generated/README.md', markdownContent, (err) =>
         err ? console.error(err) : console.log('README successfully generated!'))
 };
 

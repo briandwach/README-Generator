@@ -8,7 +8,7 @@ var licenseNames = ['None'];
 
 // List of licenses as suggested by GitHub
 function requestLicenses() {
-    fetch('https://api.github.com/licenses?featured=false&per_page=100')
+    fetch('https://api.github.com/licenses?per_page=100')
         .then(function (response) {
             return response.json();
         })
@@ -48,10 +48,24 @@ function collectInformation() {
     inquirer
         .prompt(questionsArray)
         .then((readmeContent) => {
-            let markdown = generateMarkdown(readmeContent, licenseData);
-            // writeToFile(readmeContent.title, markdown);
+            sendToMarkdownFile(readmeContent);
         });
 };
+
+function sendToMarkdownFile(readmeContent) {
+    if (readmeContent.license !== 'None') {
+        var licenseKey = getLicenseKey(readmeContent.license);
+    } else {
+        var licenseKey = 'None';
+    }
+    generateMarkdown(readmeContent, licenseKey);
+}
+
+function getLicenseKey(licenseName) {
+    let keyIndex = (licenseNames.indexOf(licenseName) - 1);
+    let licenseKey = licenseData[keyIndex].key;
+    return licenseKey;
+}
 
 // TODO: Create a function to write README file
 function writeToFile(fileName, data) {

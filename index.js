@@ -3,28 +3,23 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const generateMarkdown = require('./utils/generateMarkdown.js');
 
+var licenseData = [];
+var licenseNames = ['None'];
 
 
 // List of licenses as suggested by GitHub
-const licenses = 
-
-/[
-    'None',
-    'Apache License 2.0',
-    'GNU General Public License v3.0',
-    'MIT License',
-    "BSD 2-Clause 'Simplified' License",
-    "BSD 3-Clause 'New' or 'Revised' License", 
-    'Boost Software License 1.0',
-    'Creative Commons Zero v1.0 Universal',
-    'Eclipse Publice License 2.0',
-    'GNU Affero Public License v3.0',
-    'GNU Genral Public License v2.0',
-    'GNU Lesser General Public License v2.1',
-    'Mozilla Public License 2.0',
-    'The Unlicense'
-];
-
+function requestLicenses() {
+    fetch('https://api.github.com/licenses?featured=false&per_page=100')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (licenseRequest) {
+            licenseData = licenseRequest;
+            for (license of licenseRequest) {
+                licenseNames.push(license.name);
+            }
+        })
+};
 
 // TODO: Create an array of questions for user input
 // Each question is an array of Inquirer prompt members.
@@ -37,7 +32,7 @@ const questions = [
     ['input', 'usage', 'What is the usage information?'],
     ['input', 'contribution', 'What are the contribution guidelines?'],
     ['input', 'test', 'What are the test instructions?'],
-    ['list', 'license', 'What license are you using?', licenses, false],
+    ['list', 'license', 'What license are you using?', licenseNames, false],
     ['input', 'github', 'What is your GitHub username?'],
     ['input', 'email', 'What is your email address?']
 ];
@@ -47,7 +42,7 @@ function collectInformation() {
     let questionsArray = [];
     for (var question of questions) {
         let [type, name, message, choices, loop] = question;
-        questionsArray.push({type: type, name: name, message: message, choices: choices, loop: loop});
+        questionsArray.push({ type: type, name: name, message: message, choices: choices, loop: loop });
     };
 
     inquirer
@@ -64,9 +59,9 @@ function writeToFile(fileName, data) {
         err ? console.error(err) : console.log('README successfully generated!'))
 };
 
-
 // TODO: Create a function to initialize app
 function init() {
+    requestLicenses();
     collectInformation();
 };
 

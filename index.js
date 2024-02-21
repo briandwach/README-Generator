@@ -70,7 +70,7 @@ function getLicenseKey(licenseName, licenseData) {
 // Writes final README file to the generated directory
 function writeToFile(markdownContent) {
     fs.writeFile('./generated/README.md', markdownContent, (err) =>
-        err ? console.error(err) : console.log('README successfully generated!'))
+        err ? console.error(err) : console.log('README successfully written to /generated directory!'))
 };
 
 // Calls the API request to GitHub for license information when the application initializes

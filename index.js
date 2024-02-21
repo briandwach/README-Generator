@@ -1,11 +1,11 @@
-// TODO: Include packages needed for this application
 const inquirer = require('inquirer');
 const fs = require('fs');
 const generateMarkdownAsync = require('./utils/generateMarkdown.js');
 
+// Will store array of license names retrieved from Github API for the Inquirer prompt
 var licenseNames = ['None'];
 
-// List of licenses as suggested by GitHub
+// Fetches list of common licenses from Github API
 async function requestLicensesAsync() {
     try {
         let response = await fetch('https://api.github.com/licenses?per_page=100');
@@ -19,11 +19,9 @@ async function requestLicensesAsync() {
     }
 }
 
-
-// TODO: Create an array of questions for user input
-// Each question is an array of Inquirer prompt members.
-// Index 1: type, Index 2: name, Index 3: message, 
-// Index 4: choices, Index 5: loop, Index 6: default
+// Each question is an array fed into Inquirer to be prompt object members.
+// Index 0: type, Index 1: name, Index 2: message, 
+// Index 3: choices, Index 4: loop, Index 5: default
 const questions = [
     ['input', 'title', 'What is the title of your project?'],
     ['input', 'description', 'What is the description of your project?'],
@@ -36,7 +34,7 @@ const questions = [
     ['input', 'email', 'What is your email address?']
 ];
 
-// Inquirer function for collecting user input
+// Inquirer function for collecting user input: iterates through array to render questions
 function collectInformation(licenseData) {
     let questionsArray = [];
     for (var question of questions) {
@@ -51,6 +49,7 @@ function collectInformation(licenseData) {
         });
 };
 
+// Calls function from generateMarkdown.js to generate markdown
 async function sendToMarkdownFile(readmeContent, licenseData) {
     if (readmeContent.license !== 'None') {
         var licenseKey = getLicenseKey(readmeContent.license, licenseData);
@@ -61,22 +60,23 @@ async function sendToMarkdownFile(readmeContent, licenseData) {
     writeToFile(markdownContent);
 }
 
+// Matches selected license name to index of licenseNames array to store the license key
 function getLicenseKey(licenseName, licenseData) {
     let keyIndex = (licenseNames.indexOf(licenseName) - 1);
     let licenseKey = licenseData[keyIndex].key;
     return licenseKey;
 }
 
-// TODO: Create a function to write README file
+// Writes final README file to the generated directory
 function writeToFile(markdownContent) {
     fs.writeFile('./generated/README.md', markdownContent, (err) =>
-        err ? console.error(err) : console.log('README successfully generated!'))
+        err ? console.error(err) : console.log('README successfully written to /generated directory!'))
 };
 
-// TODO: Create a function to initialize app
+// Calls the API request to GitHub for license information when the application initializes
 function init() {
     requestLicensesAsync();
 };
 
-// Function call to initialize app
+// Calls initiliazation of application
 init();

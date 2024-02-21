@@ -1,5 +1,5 @@
-// TODO: Create a function that returns the license link
-// If there is no license, return an empty string
+// Retrieves and returns link to license information from Github API.
+// Returns empty string if no license is chosen
 async function renderLicenseLinkAsync(licenseKey) {
   if (licenseKey !== 'None') {
     let response = await fetch(`https://api.github.com/licenses/${licenseKey}`)
@@ -11,8 +11,8 @@ async function renderLicenseLinkAsync(licenseKey) {
 }
 
 
-// TODO: Create a function that returns a license badge based on which license is passed in
-// If there is no license, return an empty string
+// Creates and returns a URL for a license badge
+// Returns empty string if no license is chosen
 function renderLicenseBadge(licenseKey, licenseLink) {
   if (licenseKey !== 'None') {
     let alteredKey = licenseKey.replaceAll('-', '--');
@@ -23,8 +23,8 @@ function renderLicenseBadge(licenseKey, licenseLink) {
 }
 
 
-// TODO: Create a function that returns the license section of README
-// If there is no license, return an empty string
+// Returns the contnet for the license section of the README
+// Returns empty string if no license is chosen
 function renderLicenseSection(licenseName) {
   if (licenseName !== 'None') {
     return `This application is covered under the following license: ${licenseName}`;
@@ -34,7 +34,7 @@ function renderLicenseSection(licenseName) {
 }
 
 
-// TODO: Create a function to generate markdown for README
+// Returns markdown with a template literal to the call from index.js
 async function generateMarkdownAsync(readmeContent, licenseKey) {
   try {
     var licenseLink = await renderLicenseLinkAsync(licenseKey);

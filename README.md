@@ -41,6 +41,9 @@ Once they are all answered then a README file will be written in the <span style
 
 ![Generated README](./assets/images/generated.png)  
 
+A video demonstration of the application can be found here:
+https://drive.google.com/file/d/101gAOdD7Qe46Xu5ipL-Wh4AMW-U61jsk/view?usp=sharing
+
 ## License
 This application is covered under the following license: MIT License 
 
